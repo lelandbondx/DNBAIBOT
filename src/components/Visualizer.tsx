@@ -21,14 +21,14 @@ interface Particle {
 export function Visualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { isPlaying, currentStep, tracks } = useSequencerStore();
-  const bounceTimers = useRef<number[]>(Array(20).fill(0)); // Now 20 tracks
+  const bounceTimers = useRef<number[]>(Array(23).fill(0)); // Now 23 tracks
   const particlesRef = useRef<Particle[]>([]);
   
   const actions: Sprite['action'][] = ['jump', 'box', 'dance', 'headbang', 'spin', 'uppercut', 'breakdance'];
   
   const spritesRef = useRef<Sprite[]>(
-    Array.from({ length: 20 }, (_, i) => ({
-      x: 20 + i * 28,
+    Array.from({ length: 23 }, (_, i) => ({
+      x: 15 + i * 25,
       y: 100,
       baseY: 100,
       trackId: i,

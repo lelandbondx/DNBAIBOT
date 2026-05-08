@@ -175,11 +175,42 @@ class AudioEngine {
     });
     jungleTom.toDestination();
 
+    // Track 20: AMEN SNARE
+    const amenSnare = new Tone.NoiseSynth({
+      noise: { type: 'pink' },
+      envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+    });
+    const amenFilter = new Tone.Filter(3000, 'highpass');
+    amenSnare.connect(amenFilter);
+    amenFilter.toDestination();
+
+    // Track 21: DONK
+    const donkSynth = new Tone.FMSynth({
+      harmonicity: 0.5,
+      modulationIndex: 10,
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.2 },
+      modulation: { type: 'square' },
+      modulationEnvelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+    });
+    donkSynth.toDestination();
+
+    // Track 22: SHAKER
+    const shakerSynth = new Tone.MetalSynth({
+      envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
+      harmonicity: 8.1,
+      modulationIndex: 40,
+      resonance: 6000,
+      octaves: 1.5
+    });
+    shakerSynth.toDestination();
+
     this.synths = [
       kickSynth, snareSynth, hatSynth, growlBass, subBass,
       leadSynth, rideSynth, padSynth, ghostSynth, crashSynth,
       synC, synEb, synF, synG, synBb,
-      reeseSynth, wobbleSynth, stabSynth, eightOhEight, jungleTom
+      reeseSynth, wobbleSynth, stabSynth, eightOhEight, jungleTom,
+      amenSnare, donkSynth, shakerSynth
     ];
 
     // Connect tracks 0-9 to destination
@@ -247,6 +278,10 @@ class AudioEngine {
         else if (index === 17) (synth as Tone.PolySynth).triggerAttackRelease(['D4', 'F4', 'A4', 'C5'], '8n', time); // Minor 7th Rave Stab
         else if (index === 18) (synth as Tone.MembraneSynth).triggerAttackRelease('C1', '2n', time); // 808
         else if (index === 19) (synth as Tone.MembraneSynth).triggerAttackRelease('G2', '8n', time); // Jungle Tom
+        // 3 Brand New Extras
+        else if (index === 20) (synth as Tone.NoiseSynth).triggerAttackRelease('32n', time); // Amen Snare
+        else if (index === 21) (synth as Tone.FMSynth).triggerAttackRelease('C2', '16n', time); // Donk
+        else if (index === 22) (synth as Tone.MetalSynth).triggerAttackRelease('64n', time); // Shaker
       }
     });
 

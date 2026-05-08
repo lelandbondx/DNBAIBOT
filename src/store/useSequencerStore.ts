@@ -66,6 +66,10 @@ const defaultTracks: TrackState[] = [
   { id: 17, name: ' STAB', volume: -4, muted: false, solo: false, steps: makeSteps(14) },
   { id: 18, name: '  808', volume: 0, muted: false, solo: false, steps: makeSteps() },
   { id: 19, name: 'J TOM', volume: -4, muted: false, solo: false, steps: makeSteps(14, 15) },
+  // 3 New Extras for 23 Rows
+  { id: 20, name: ' AMEN', volume: -4, muted: false, solo: false, steps: makeSteps(7, 9) },
+  { id: 21, name: ' DONK', volume: -2, muted: false, solo: false, steps: makeSteps() },
+  { id: 22, name: ' SHAK', volume: -8, muted: false, solo: false, steps: makeSteps(1, 3, 5, 7, 9, 11, 13, 15) },
 ];
 
 // Encode 16 steps securely using BigInt to Hex
@@ -216,6 +220,22 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
       }
 
       newTracks[9].steps[0] = true; // Crash
+      
+      // Amen snare ghost notes (20)
+      [7, 9].forEach(s => {
+        if (Math.random() > 0.5) newTracks[20].steps[s] = true;
+      });
+      
+      // Donk (21)
+      if (Math.random() > 0.5) {
+        newTracks[21].steps[2] = true;
+        newTracks[21].steps[10] = true;
+      }
+
+      // Shakers (22)
+      for(let i = 1; i < 16; i += 2) {
+        if (Math.random() > 0.3) newTracks[22].steps[i] = true;
+      }
 
       return { tracks: newTracks };
     });
