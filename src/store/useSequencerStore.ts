@@ -8,7 +8,7 @@ export interface TrackState {
   volume: number; // -60 to 0
   muted: boolean;
   solo: boolean;
-  steps: boolean[]; // 32 steps (2 Bars)
+  steps: boolean[]; // 16 steps (1 Bar)
 }
 
 export type KitType = 'UK-DNB' | 'LIQUID' | 'NEURO' | 'JUNGLE';
@@ -37,16 +37,16 @@ interface SequencerState {
 
 // Helper to easily set steps
 const makeSteps = (...activeIndices: number[]) => {
-  const steps = Array(32).fill(false);
-  activeIndices.forEach(i => { if (i < 32) steps[i] = true; });
+  const steps = Array(16).fill(false);
+  activeIndices.forEach(i => { if (i < 16) steps[i] = true; });
   return steps;
 };
 
 // FAST 174 BPM DNB PATTERNS (16 steps = 1 bar. Snare on 4 and 12)
 const defaultTracks: TrackState[] = [
-  { id: 0, name: 'KICK', volume: 0, muted: false, solo: false, steps: makeSteps(0, 5, 8, 16, 21, 24) },
-  { id: 1, name: 'SNAR', volume: -2, muted: false, solo: false, steps: makeSteps(4, 12, 20, 28) },
-  { id: 2, name: ' HAT', volume: -6, muted: false, solo: false, steps: makeSteps(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30) }, 
+  { id: 0, name: 'KICK', volume: 0, muted: false, solo: false, steps: makeSteps(0, 5, 8, 10) },
+  { id: 1, name: 'SNAR', volume: -2, muted: false, solo: false, steps: makeSteps(4, 12) },
+  { id: 2, name: ' HAT', volume: -6, muted: false, solo: false, steps: makeSteps(0, 2, 4, 6, 8, 10, 12, 14) }, 
   { id: 3, name: 'BASS', volume: -4, muted: false, solo: false, steps: makeSteps() }, 
   { id: 4, name: ' SUB', volume: -2, muted: false, solo: false, steps: makeSteps() }, 
   { id: 5, name: 'LEAD', volume: -6, muted: false, solo: false, steps: makeSteps() }, 
@@ -61,20 +61,20 @@ const defaultTracks: TrackState[] = [
   { id: 13, name: 'SYN G', volume: -4, muted: false, solo: false, steps: makeSteps() },
   { id: 14, name: 'SYN Bb', volume: -4, muted: false, solo: false, steps: makeSteps() },
   // Brand new Classic DNB Instruments
-  { id: 15, name: 'REESE', volume: -2, muted: false, solo: false, steps: makeSteps(0, 16) },
+  { id: 15, name: 'REESE', volume: -2, muted: false, solo: false, steps: makeSteps(0) },
   { id: 16, name: 'WOBBL', volume: -2, muted: false, solo: false, steps: makeSteps() },
-  { id: 17, name: ' STAB', volume: -4, muted: false, solo: false, steps: makeSteps() },
+  { id: 17, name: ' STAB', volume: -4, muted: false, solo: false, steps: makeSteps(14) },
   { id: 18, name: '  808', volume: 0, muted: false, solo: false, steps: makeSteps() },
-  { id: 19, name: 'J TOM', volume: -4, muted: false, solo: false, steps: makeSteps(14, 30) },
+  { id: 19, name: 'J TOM', volume: -4, muted: false, solo: false, steps: makeSteps(14, 15) },
 ];
 
-// Encode 32 steps securely using BigInt to Hex
+// Encode 16 steps securely using BigInt to Hex
 const encodeSteps = (steps: boolean[]): string => {
   const binaryString = steps.map(s => s ? '1' : '0').join('');
   return BigInt('0b' + binaryString).toString(16);
 };
 
-// Decode hex to 32 steps using BigInt
+// Decode hex to 16 steps using BigInt
 const decodeSteps = (encoded: string): boolean[] => {
   let binaryString = '0';
   try {
@@ -82,8 +82,8 @@ const decodeSteps = (encoded: string): boolean[] => {
   } catch(e) {
     // fallback
   }
-  const padded = binaryString.padStart(32, '0');
-  return padded.split('').map(c => c === '1').slice(0, 32);
+  const padded = binaryString.padStart(16, '0');
+  return padded.split('').map(c => c === '1').slice(0, 16);
 };
 
 // Load state from URL Hash or Query
@@ -128,7 +128,6 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
   toggleDistortion: () => set((state) => ({ distortionEnabled: !state.distortionEnabled })),
   setBpm: (bpm) => {
     const newBpm = Math.max(120, Math.min(220, bpm));
-    // Immediately update Tone.js Transport BPM to prevent jitter
     import('tone').then(Tone => {
       Tone.Transport.bpm.value = newBpm;
     });
@@ -139,7 +138,7 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
   setCurrentStep: (step) => set({ currentStep: step }),
   setKit: (kit) => set({ currentKit: kit }),
   clearPattern: () => set((state) => ({
-    tracks: state.tracks.map(t => ({ ...t, steps: Array(32).fill(false) }))
+    tracks: state.tracks.map(t => ({ ...t, steps: Array(16).fill(false) }))
   })),
   generateEpicBeat: () => {
     // UK DNB Quantize & Style Magic (16 steps = 1 bar)
@@ -153,26 +152,26 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
 
       const isGeneratingFresh = noteCount < 10;
 
-      // Enforce Snare on 2 and 4 (Steps 4, 12, 20, 28)
-      const validSnares = [4, 12, 20, 28];
+      // Enforce Snare on 2 and 4 (Steps 4, 12)
+      const validSnares = [4, 12];
       validSnares.forEach(s => {
         newTracks[1].steps[s] = true;
       });
 
       // Clear awkward snares closely around the 2 and 4
-      [3, 5, 11, 13, 19, 21, 27, 29].forEach(s => {
+      [3, 5, 11, 13].forEach(s => {
         newTracks[1].steps[s] = false;
       });
 
       // Quantize Kicks to UK DNB rhythm
-      const validKickGrid = [0, 5, 8, 10, 16, 21, 24, 26];
+      const validKickGrid = [0, 5, 8, 10];
       
       if (!isGeneratingFresh) {
-        for (let i = 0; i < 32; i++) {
+        for (let i = 0; i < 16; i++) {
           if (newTracks[0].steps[i] && !validKickGrid.includes(i)) {
             newTracks[0].steps[i] = false;
             let nearest = validKickGrid[0];
-            let minDist = 32;
+            let minDist = 16;
             validKickGrid.forEach(v => {
               if (Math.abs(v - i) < minDist) {
                 minDist = Math.abs(v - i);
@@ -184,39 +183,36 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
         }
       } else {
         // Generate fresh kicks
-        [0, 5, 8, 16, 21, 24].forEach(s => newTracks[0].steps[s] = true);
+        [0, 5, 8].forEach(s => newTracks[0].steps[s] = true);
       }
 
       // Ensure Hat momentum (every 8th note)
-      for (let i = 0; i < 32; i += 2) {
+      for (let i = 0; i < 16; i += 2) {
         newTracks[2].steps[i] = true; 
         if (Math.random() > 0.7) newTracks[2].steps[i+1] = true; // Random 16th hats
       }
 
       // Drop in some Rave Stabs (17) on off-beats
-      [6, 14, 22, 30].forEach(s => {
+      [6, 14].forEach(s => {
         if (Math.random() > 0.6) newTracks[17].steps[s] = true;
       });
 
       // Layer 808 (18)
-      [0, 16].forEach(s => {
+      [0].forEach(s => {
         if (Math.random() > 0.5) newTracks[18].steps[s] = true;
       });
       
       // Add Jungle Toms (19) for rolling breaks
-      [6, 7, 14, 15, 30, 31].forEach(s => {
+      [6, 7, 14, 15].forEach(s => {
         if (Math.random() > 0.6) newTracks[19].steps[s] = true;
       });
 
       // Reese (15) and Wobble (16)
       if (Math.random() > 0.5) {
         newTracks[15].steps[0] = true; 
-        newTracks[15].steps[16] = true;
       } else {
         newTracks[16].steps[0] = true; 
         newTracks[16].steps[8] = true;
-        newTracks[16].steps[16] = true;
-        newTracks[16].steps[24] = true;
       }
 
       newTracks[9].steps[0] = true; // Crash

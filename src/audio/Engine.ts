@@ -250,7 +250,7 @@ class AudioEngine {
       }
     });
 
-    store.setCurrentStep((currentStep + 1) % 32); // Reverted to 32 steps
+    store.setCurrentStep((currentStep + 1) % 16); // Reverted to 16 steps
   }
 
   start() {
