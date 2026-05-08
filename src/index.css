@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lcd-bg: #000000;
+  --color-lcd-bg-dark: #000000;
+  --color-lcd-pixel: #39ff14;
+  --color-lcd-pixel-off: #002200;
+  --color-hw-bg: #000000;
+  --color-hw-dark: #000000;
+  --color-hw-btn: #111111;
+  --color-hw-text: #39ff14;
+
+  --font-pixel: "Press Start 2P", cursive;
+  --font-sans: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-hw-dark);
+  color: var(--color-hw-text);
+  font-family: var(--font-sans);
+  background-image: 
+    linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Custom Utilities for LCD effect */
+.lcd-screen {
+  background-color: var(--color-lcd-bg);
+  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+/* Buttons */
+.btn-hw {
+  background-color: var(--color-hw-btn);
+  border: 2px solid #39ff14;
+  color: var(--color-hw-text);
+  box-shadow: 0 4px 0 #005500, 0 0 10px rgba(57, 255, 20, 0.2);
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+}
+
+.btn-hw:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #005500, 0 0 15px rgba(57, 255, 20, 0.6);
+}
+
+.btn-hw.active {
+  background-color: #002200;
+  color: #39ff14;
+  border-color: #39ff14;
+  box-shadow: 0 2px 0 #005500, inset 0 0 10px #39ff14;
+  transform: translateY(2px);
+}
+
+.active-green {
+  background-color: #39ff14 !important;
+  box-shadow: 0 0 15px #39ff14, inset 0 0 10px #ffffff !important;
+  border-color: #ffffff !important;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 10px #39ff14, inset 0 0 5px #ffffff; }
+  50% { box-shadow: 0 0 20px #39ff14, inset 0 0 15px #ffffff; }
+  100% { box-shadow: 0 0 10px #39ff14, inset 0 0 5px #ffffff; }
+}
+
+@keyframes flash-beat {
+  0% { transform: scale(1.1); box-shadow: 0 0 25px #39ff14; background-color: #ffffff; }
+  100% { transform: scale(1); }
+}
+
+.beat-hit {
+  animation: flash-beat 0.2s ease-out;
+}
