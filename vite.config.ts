@@ -5,6 +5,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/DNBAIBOT/',
   plugins: [
     react(),
     tailwindcss(),
