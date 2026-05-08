@@ -42,13 +42,13 @@ const makeSteps = (...activeIndices: number[]) => {
   return steps;
 };
 
-// FAST 174 BPM DNB PATTERNS (16 steps = 1 bar. Snare on 4 and 12)
+// CLEAN CLASSIC DNB PATTERN (16 steps = 1 bar)
 const defaultTracks: TrackState[] = [
-  { id: 0, name: 'KICK', volume: 0, muted: false, solo: false, steps: makeSteps(0, 5, 8, 10) },
+  { id: 0, name: 'KICK', volume: 0, muted: false, solo: false, steps: makeSteps(0, 10) },
   { id: 1, name: 'SNAR', volume: -2, muted: false, solo: false, steps: makeSteps(4, 12) },
   { id: 2, name: ' HAT', volume: -6, muted: false, solo: false, steps: makeSteps(0, 2, 4, 6, 8, 10, 12, 14) }, 
   { id: 3, name: 'BASS', volume: -4, muted: false, solo: false, steps: makeSteps() }, 
-  { id: 4, name: ' SUB', volume: -2, muted: false, solo: false, steps: makeSteps() }, 
+  { id: 4, name: ' SUB', volume: -2, muted: false, solo: false, steps: makeSteps(0) }, 
   { id: 5, name: 'LEAD', volume: -6, muted: false, solo: false, steps: makeSteps() }, 
   { id: 6, name: 'RIDE', volume: -8, muted: false, solo: false, steps: makeSteps() }, 
   { id: 7, name: ' PAD', volume: -10, muted: false, solo: false, steps: makeSteps() }, 
@@ -61,13 +61,13 @@ const defaultTracks: TrackState[] = [
   { id: 13, name: 'SYN G', volume: -4, muted: false, solo: false, steps: makeSteps() },
   { id: 14, name: 'SYN Bb', volume: -4, muted: false, solo: false, steps: makeSteps() },
   // Brand new Classic DNB Instruments
-  { id: 15, name: 'REESE', volume: -2, muted: false, solo: false, steps: makeSteps(0) },
+  { id: 15, name: 'REESE', volume: -2, muted: false, solo: false, steps: makeSteps() },
   { id: 16, name: 'WOBBL', volume: -2, muted: false, solo: false, steps: makeSteps() },
-  { id: 17, name: ' STAB', volume: -4, muted: false, solo: false, steps: makeSteps(14) },
+  { id: 17, name: ' STAB', volume: -4, muted: false, solo: false, steps: makeSteps() },
   { id: 18, name: '  808', volume: 0, muted: false, solo: false, steps: makeSteps() },
-  { id: 19, name: 'J TOM', volume: -4, muted: false, solo: false, steps: makeSteps(14, 15) },
-  // 3 New Extras for 23 Rows
-  { id: 20, name: ' AMEN', volume: -4, muted: false, solo: false, steps: makeSteps(7, 9) },
+  { id: 19, name: 'J TOM', volume: -4, muted: false, solo: false, steps: makeSteps() },
+  // Extras
+  { id: 20, name: ' AMEN', volume: -4, muted: false, solo: false, steps: makeSteps() },
   { id: 21, name: ' DONK', volume: -2, muted: false, solo: false, steps: makeSteps() },
   { id: 22, name: ' SHAK', volume: -8, muted: false, solo: false, steps: makeSteps(1, 3, 5, 7, 9, 11, 13, 15) },
 ];
@@ -167,8 +167,8 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
         newTracks[1].steps[s] = false;
       });
 
-      // Quantize Kicks to UK DNB rhythm
-      const validKickGrid = [0, 5, 8, 10];
+      // Quantize Kicks to UK DNB rhythm (Minimal)
+      const validKickGrid = [0, 8, 10];
       
       if (!isGeneratingFresh) {
         for (let i = 0; i < 16; i++) {
@@ -186,8 +186,9 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
           }
         }
       } else {
-        // Generate fresh kicks
-        [0, 5, 8].forEach(s => newTracks[0].steps[s] = true);
+        // Generate fresh clean kicks
+        [0, 10].forEach(s => newTracks[0].steps[s] = true);
+        if (Math.random() > 0.5) newTracks[0].steps[8] = true;
       }
 
       // Ensure Hat momentum (every 8th note)
