@@ -15,16 +15,26 @@ export function Grid() {
       onMouseLeave={() => setIsDragging(false)}
       onTouchEnd={() => setIsDragging(false)}
     >
-      <div className="min-w-[1200px] flex flex-col gap-2 select-none">
+      <div className="min-w-[2400px] flex flex-col gap-2 select-none">
         {/* Step Numbers (LCD Style) */}
         <div className="flex mb-2">
           <div className="w-24 shrink-0"></div>
           <div className="flex-1 flex gap-2 px-2">
-            {Array(32).fill(0).map((_, i) => (
-              <div key={i} className="flex-1 text-center font-pixel text-[8px] text-gray-500">
-                {(i % 4 === 0) ? (i / 4) + 1 : '·'}
-              </div>
-            ))}
+            {Array(64).fill(0).map((_, i) => {
+              // Mark the beginning of each bar
+              let label: string | number = '·';
+              if (i === 0) label = 'B1';
+              else if (i === 16) label = 'B2';
+              else if (i === 32) label = 'B3';
+              else if (i === 48) label = 'B4';
+              else if (i % 4 === 0) label = (i % 16) / 4 + 1;
+              
+              return (
+                <div key={i} className={`flex-1 text-center font-pixel text-[8px] ${label.toString().startsWith('B') ? 'text-[#39ff14]' : 'text-gray-500'}`}>
+                  {label}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -51,6 +61,7 @@ export function Grid() {
               {track.steps.map((isActive, stepIndex) => {
                 const isCurrentStep = isPlaying && currentStep === stepIndex;
                 const isBeat = stepIndex % 4 === 0;
+                const isBar = stepIndex % 16 === 0;
                 
                 return (
                   <button
@@ -66,7 +77,6 @@ export function Grid() {
                         setStep(track.id, stepIndex, dragAction);
                       }
                     }}
-                    // Touch support for basic dragging on mobile
                     onTouchMove={(e) => {
                       if (!isDragging) return;
                       const touch = e.touches[0];
@@ -78,7 +88,7 @@ export function Grid() {
                     }}
                     className={`flex-1 aspect-square min-h-[20px] max-h-[30px] rounded-sm md:rounded-full btn-hw relative transition-none ${
                       isActive ? 'active-green' : ''
-                    } ${isCurrentStep && isActive ? 'beat-hit' : ''} ${isCurrentStep && !isActive ? 'border-[#39ff14] bg-[#0a2a0a]' : ''} ${isBeat && !isActive ? 'opacity-75 bg-[#050505]' : ''}`}
+                    } ${isCurrentStep && isActive ? 'beat-hit' : ''} ${isCurrentStep && !isActive ? 'border-[#39ff14] bg-[#0a2a0a]' : ''} ${isBar ? 'border-l-2 border-l-[#005500]' : ''} ${isBeat && !isActive ? 'opacity-75 bg-[#050505]' : ''}`}
                   >
                     {/* Tiny LED indicator inside button */}
                     <div className={`absolute top-0.5 left-0.5 md:top-1 md:left-1 w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${isActive ? 'bg-[#39ff14] shadow-[0_0_6px_#39ff14]' : 'bg-[#111]'}`}></div>

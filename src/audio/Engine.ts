@@ -108,7 +108,7 @@ class AudioEngine {
     });
     crashSynth.connect(padReverb);
 
-    // Melodic Tracks (10-14) - Plucky FM Synths for the pentatonic scale
+    // Melodic Tracks (10-14)
     const createMelodicSynth = () => {
       const synth = new Tone.FMSynth({
         harmonicity: 2,
@@ -130,10 +130,56 @@ class AudioEngine {
     const synG = createMelodicSynth();
     const synBb = createMelodicSynth();
 
+    // Track 15: REESE BASS
+    const reeseSynth = new Tone.Synth({
+      oscillator: { type: 'fatsawtooth', spread: 40, count: 3 } as any,
+      envelope: { attack: 0.1, decay: 0.3, sustain: 0.8, release: 0.8 }
+    });
+    const reeseFilter = new Tone.Filter(800, 'lowpass');
+    reeseSynth.connect(reeseFilter);
+    reeseFilter.toDestination();
+
+    // Track 16: WOBBLE BASS
+    const wobbleSynth = new Tone.Synth({
+      oscillator: { type: 'square' },
+      envelope: { attack: 0.05, decay: 0.3, sustain: 0.6, release: 0.4 }
+    });
+    const wobbleFilter = new Tone.AutoFilter("8n").start();
+    wobbleFilter.baseFrequency = 100;
+    wobbleFilter.octaves = 4;
+    wobbleSynth.connect(wobbleFilter);
+    wobbleFilter.toDestination();
+
+    // Track 17: RAVE STAB
+    const stabSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: 'sawtooth' },
+      envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
+    });
+    stabSynth.toDestination();
+
+    // Track 18: 808 GLIDE
+    const eightOhEight = new Tone.MembraneSynth({
+      pitchDecay: 0.08,
+      octaves: 4,
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 }
+    });
+    eightOhEight.toDestination();
+
+    // Track 19: JUNGLE TOM
+    const jungleTom = new Tone.MembraneSynth({
+      pitchDecay: 0.01,
+      octaves: 2,
+      oscillator: { type: 'square' },
+      envelope: { attack: 0.01, decay: 0.4, sustain: 0, release: 0.4 }
+    });
+    jungleTom.toDestination();
+
     this.synths = [
       kickSynth, snareSynth, hatSynth, growlBass, subBass,
       leadSynth, rideSynth, padSynth, ghostSynth, crashSynth,
-      synC, synEb, synF, synG, synBb
+      synC, synEb, synF, synG, synBb,
+      reeseSynth, wobbleSynth, stabSynth, eightOhEight, jungleTom
     ];
 
     // Connect tracks 0-9 to destination
@@ -195,10 +241,16 @@ class AudioEngine {
         else if (index === 12) (synth as Tone.FMSynth).triggerAttackRelease('F4', '16n', time);
         else if (index === 13) (synth as Tone.FMSynth).triggerAttackRelease('G4', '16n', time);
         else if (index === 14) (synth as Tone.FMSynth).triggerAttackRelease('Bb4', '16n', time);
+        // New Authentic DNB Instruments
+        else if (index === 15) (synth as Tone.Synth).triggerAttackRelease('F1', '4n', time); // Reese
+        else if (index === 16) (synth as Tone.Synth).triggerAttackRelease('D2', '4n', time); // Wobble
+        else if (index === 17) (synth as Tone.PolySynth).triggerAttackRelease(['D4', 'F4', 'A4', 'C5'], '8n', time); // Minor 7th Rave Stab
+        else if (index === 18) (synth as Tone.MembraneSynth).triggerAttackRelease('C1', '2n', time); // 808
+        else if (index === 19) (synth as Tone.MembraneSynth).triggerAttackRelease('G2', '8n', time); // Jungle Tom
       }
     });
 
-    store.setCurrentStep((currentStep + 1) % 32); // Updated to 32 steps
+    store.setCurrentStep((currentStep + 1) % 64); // Updated to 64 steps!
   }
 
   start() {

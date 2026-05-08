@@ -117,10 +117,10 @@ export function Transport() {
         <button 
           onClick={generateEpicBeat}
           className="btn-hw magic-btn px-4 h-12 md:h-16 rounded-lg font-pixel text-[10px] flex items-center justify-center gap-2 text-[#39ff14]"
-          title="Instantly generate an Epic Track!"
+          title="Quantize your beat to UK DNB & add styling!"
         >
           <Wand2 size={20} />
-          <span className="hidden md:inline">MAGIC GEN</span>
+          <span className="hidden md:inline">UK DNB MAGIC</span>
         </button>
 
         <button 
