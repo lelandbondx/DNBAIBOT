@@ -15,12 +15,12 @@ export function Grid() {
       onMouseLeave={() => setIsDragging(false)}
       onTouchEnd={() => setIsDragging(false)}
     >
-      <div className="min-w-[2400px] flex flex-col gap-2 select-none">
+      <div className="min-w-[1200px] flex flex-col gap-2 select-none">
         {/* Step Numbers (LCD Style) */}
         <div className="flex mb-2">
           <div className="w-24 shrink-0"></div>
           <div className="flex-1 flex gap-2 px-2">
-            {Array(64).fill(0).map((_, i) => {
+            {Array(32).fill(0).map((_, i) => {
               // Mark the beginning of each bar
               let label: string | number = '·';
               if (i === 0) label = 'B1';
