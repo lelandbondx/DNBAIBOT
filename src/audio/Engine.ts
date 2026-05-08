@@ -189,7 +189,7 @@ class AudioEngine {
 
     Tone.Transport.scheduleRepeat((time) => {
       this.playStep(time);
-    }, '32n');
+    }, '16n');
 
     Tone.Transport.bpm.value = useSequencerStore.getState().bpm;
     this.initialized = true;
