@@ -1,11 +1,11 @@
-import { Play, Square, RefreshCw, Trash2, Plus, Minus, Share2 } from 'lucide-react';
+import { Play, Square, RefreshCw, Trash2, Plus, Minus, Share2, Wand2 } from 'lucide-react';
 import { useSequencerStore } from '../store/useSequencerStore';
 import type { KitType } from '../store/useSequencerStore';
 import { engine } from '../audio/Engine';
 import { useState } from 'react';
 
 export function Transport() {
-  const { isPlaying, togglePlay, bpm, setBpm, currentKit, setKit, clearPattern, distortionEnabled, toggleDistortion, getShareUrl } = useSequencerStore();
+  const { isPlaying, togglePlay, bpm, setBpm, currentKit, setKit, clearPattern, generateEpicBeat, distortionEnabled, toggleDistortion, getShareUrl } = useSequencerStore();
   const [copied, setCopied] = useState(false);
 
   const handlePlayPause = () => {
@@ -111,6 +111,16 @@ export function Transport() {
         >
           <Share2 size={16} />
           <span>{copied ? 'COPIED!' : 'SHARE'}</span>
+        </button>
+
+        {/* MAGIC GEN BUTTON */}
+        <button 
+          onClick={generateEpicBeat}
+          className="btn-hw magic-btn px-4 h-12 md:h-16 rounded-lg font-pixel text-[10px] flex items-center justify-center gap-2 text-[#39ff14]"
+          title="Instantly generate an Epic Track!"
+        >
+          <Wand2 size={20} />
+          <span className="hidden md:inline">MAGIC GEN</span>
         </button>
 
         <button 
