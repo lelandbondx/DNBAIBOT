@@ -35,7 +35,7 @@ export function Transport() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-[#dcdcdc] border-4 border-[#888] shadow-inner p-4 rounded-xl">
+    <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-[#050505] border-4 border-[#39ff14] shadow-[0_0_20px_rgba(57,255,20,0.1)] p-4 rounded-xl">
       
       <div className="flex items-center gap-4 w-full md:w-auto">
         <button
@@ -43,24 +43,25 @@ export function Transport() {
             triggerHaptic();
             handlePlay();
           }}
-          className={`flex-1 md:flex-none w-16 h-16 rounded-full flex items-center justify-center font-bold text-[10px] md:text-xs ${
-            isPlaying ? 'po-button-red' : 'po-button-dark'
+          className={`flex-1 md:flex-none w-16 h-16 flex items-center justify-center font-bold text-[10px] md:text-xs ${
+            isPlaying ? 'po-button-red' : 'po-button'
           }`}
+          style={{ borderRadius: '12px' }}
         >
           {isPlaying ? 'STOP' : 'PLAY'}
         </button>
 
-        <div className="flex flex-col gap-1 items-center bg-[#b0b0b0] p-2 rounded-lg border-2 border-[#888] shadow-inner">
-          <label className="text-[10px] font-bold text-[#555] uppercase">Tempo</label>
+        <div className="flex flex-col gap-1 items-center bg-[#111] p-2 rounded-lg border-2 border-[#222] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]">
+          <label className="text-[10px] font-bold text-[#888] uppercase">Tempo</label>
           <input
             type="range"
             min="120"
             max="220"
             value={bpm}
             onChange={(e) => setBpm(Number(e.target.value))}
-            className="w-24 md:w-32 accent-[#333]"
+            className="w-24 md:w-32 accent-[#39ff14]"
           />
-          <div className="font-pixel text-[#111] text-lg bg-[#8b9bb4] px-2 rounded border border-[#555] shadow-inner min-w-[60px] text-center">
+          <div className="font-pixel text-[#39ff14] text-lg bg-[#000] px-2 rounded border border-[#39ff14] min-w-[60px] text-center shadow-[inset_0_0_10px_rgba(57,255,20,0.2)]">
             {bpm}
           </div>
         </div>
@@ -70,7 +71,7 @@ export function Transport() {
         <select 
           value={currentKit}
           onChange={handleKitChange}
-          className="bg-[#222] text-[#eee] font-bold text-xs uppercase px-3 py-2 rounded-lg border-2 border-[#111] outline-none cursor-pointer flex-1 md:flex-none shadow-md"
+          className="bg-[#000] text-[#39ff14] font-bold text-xs uppercase px-3 py-2 rounded-lg border-2 border-[#39ff14] outline-none cursor-pointer flex-1 md:flex-none shadow-[0_0_10px_rgba(57,255,20,0.2)]"
         >
           <option value="UK-DNB">UK-DNB</option>
           <option value="LIQUID">LIQUID</option>
@@ -84,8 +85,9 @@ export function Transport() {
               triggerHaptic();
               clearPattern();
             }}
-            className="w-12 h-12 rounded-full po-button-dark flex flex-col items-center justify-center text-[9px]"
+            className="w-12 h-12 po-button-dark flex flex-col items-center justify-center text-[9px]"
             title="Clear Pattern"
+            style={{ borderRadius: '8px' }}
           >
             CLR
           </button>
@@ -95,8 +97,9 @@ export function Transport() {
               triggerHaptic();
               handleShare();
             }}
-            className="w-12 h-12 rounded-full po-button-dark flex flex-col items-center justify-center text-[9px]"
+            className="w-12 h-12 po-button-dark flex flex-col items-center justify-center text-[9px]"
             title="Share Beat URL"
+            style={{ borderRadius: '8px' }}
           >
             {copied ? 'DONE' : 'SHR'}
           </button>
@@ -106,8 +109,9 @@ export function Transport() {
               triggerHaptic();
               generateEpicBeat();
             }}
-            className="w-12 h-12 rounded-full po-button flex flex-col items-center justify-center text-[9px]"
+            className="w-12 h-12 po-button flex flex-col items-center justify-center text-[9px]"
             title="Generate DNB Magic"
+            style={{ borderRadius: '8px' }}
           >
             MAGIC
           </button>

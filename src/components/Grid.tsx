@@ -14,7 +14,7 @@ export function Grid() {
 
   return (
     <div 
-      className="bg-[#dcdcdc] border-4 border-[#888] p-3 md:p-4 rounded-xl w-full shadow-inner select-none"
+      className="bg-[#050505] border-4 border-[#39ff14] p-3 md:p-4 rounded-xl w-full shadow-[inset_0_0_20px_rgba(57,255,20,0.1)] select-none"
       onMouseUp={() => setIsDragging(false)}
       onMouseLeave={() => setIsDragging(false)}
       onTouchEnd={() => setIsDragging(false)}
@@ -25,7 +25,7 @@ export function Grid() {
           <div className="w-16 md:w-24 shrink-0"></div>
           <div className="flex-1 flex gap-1 md:gap-2 px-1 md:px-2">
             {Array(16).fill(0).map((_, i) => (
-              <div key={i} className={`flex-1 text-center font-bold text-[10px] md:text-xs text-[#666]`}>
+              <div key={i} className={`flex-1 text-center font-bold text-[10px] md:text-xs text-[#39ff14] opacity-50`}>
                 {(i % 4) + 1}
               </div>
             ))}
@@ -37,7 +37,7 @@ export function Grid() {
           <div key={track.id} className="flex items-center group">
             {/* Track Label */}
             <div className="w-16 md:w-24 shrink-0 flex items-center justify-between pr-2 md:pr-4">
-              <span className={`font-bold font-sans text-[9px] md:text-xs ${track.muted ? 'text-[#888]' : 'text-[#222]'}`}>
+              <span className={`font-bold font-sans text-[9px] md:text-xs ${track.muted ? 'text-[#005500]' : 'text-[#39ff14]'}`}>
                 {track.name}
               </span>
               <button 
@@ -54,7 +54,7 @@ export function Grid() {
             </div>
 
             {/* Step Buttons */}
-            <div className="flex-1 flex gap-1 md:gap-2 px-1 md:px-2 py-1 bg-[#222] rounded shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] border border-[#444]">
+            <div className="flex-1 flex gap-1 md:gap-2 px-1 md:px-2 py-1 bg-[#000] rounded border border-[#1a8809]">
               {track.steps.map((isActive, stepIndex) => {
                 const isCurrentStep = isPlaying && currentStep === stepIndex;
                 const isBeat = stepIndex % 4 === 0;
@@ -84,10 +84,10 @@ export function Grid() {
                         element.dispatchEvent(evt);
                       }
                     }}
-                    className={`flex-1 aspect-square min-h-[16px] max-h-[30px] ${isActive ? 'po-button border-b-[1px] translate-y-[2px]' : 'po-button'} ${isBeat && !isActive ? 'opacity-80' : ''}`}
+                    className={`flex-1 aspect-square min-h-[24px] max-h-[36px] ${isActive ? 'po-button-active border-b-[2px] translate-y-[2px]' : 'po-button'} ${isBeat && !isActive ? 'opacity-80' : ''}`}
                   >
                     {/* Hardware LED inside the button */}
-                    <div className={`led-indicator ${isActive ? 'led-active' : ''} ${isCurrentStep && !isActive ? 'led-play' : ''} ${isCurrentStep && isActive ? 'bg-[#fff] shadow-[0_0_10px_#fff]' : ''}`}></div>
+                    <div className={`led-indicator ${isActive ? 'hidden' : ''} ${isCurrentStep && !isActive ? 'led-play' : ''}`}></div>
                   </button>
                 );
               })}

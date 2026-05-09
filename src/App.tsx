@@ -35,8 +35,8 @@ function App() {
           <Grid />
 
           {/* Punch-In FX Buttons */}
-          <div className="flex justify-between items-center bg-[#111] p-3 md:p-4 rounded-xl border-4 border-[#222] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] mt-2">
-            <div className="font-sans font-bold text-[#666] uppercase text-xs md:text-sm tracking-widest">
+          <div className="flex justify-between items-center bg-[#050505] p-3 md:p-4 rounded-xl border-4 border-[#39ff14] shadow-[0_0_20px_rgba(57,255,20,0.1)] mt-2">
+            <div className="font-sans font-bold text-[#39ff14] uppercase text-xs md:text-sm tracking-widest drop-shadow-[0_0_5px_#39ff14]">
               Live Punch-In FX
             </div>
             <div className="flex gap-2 md:gap-4">
@@ -46,10 +46,11 @@ function App() {
                 onMouseLeave={() => setFX(null)}
                 onTouchStart={() => handleFX('STUTTER')}
                 onTouchEnd={() => setFX(null)}
-                className="w-12 h-12 md:w-16 md:h-16 po-button rounded-full flex flex-col"
+                className="w-12 h-12 md:w-16 md:h-16 po-button flex flex-col"
+                style={{ borderRadius: '12px' }}
               >
-                <div className="text-[10px] md:text-xs">1</div>
-                <div className="text-[8px] md:text-[10px] text-[#555]">STTTR</div>
+                <div className="text-[10px] md:text-xs text-[#000]">1</div>
+                <div className="text-[8px] md:text-[10px] text-[#000]">STTTR</div>
               </button>
               <button 
                 onMouseDown={() => handleFX('FILTER')}
@@ -57,10 +58,11 @@ function App() {
                 onMouseLeave={() => setFX(null)}
                 onTouchStart={() => handleFX('FILTER')}
                 onTouchEnd={() => setFX(null)}
-                className="w-12 h-12 md:w-16 md:h-16 po-button rounded-full flex flex-col"
+                className="w-12 h-12 md:w-16 md:h-16 po-button flex flex-col"
+                style={{ borderRadius: '12px' }}
               >
-                <div className="text-[10px] md:text-xs">2</div>
-                <div className="text-[8px] md:text-[10px] text-[#555]">FLTER</div>
+                <div className="text-[10px] md:text-xs text-[#000]">2</div>
+                <div className="text-[8px] md:text-[10px] text-[#000]">FLTER</div>
               </button>
               <button 
                 onMouseDown={() => handleFX('DROP')}
@@ -68,7 +70,8 @@ function App() {
                 onMouseLeave={() => setFX(null)}
                 onTouchStart={() => handleFX('DROP')}
                 onTouchEnd={() => setFX(null)}
-                className="w-12 h-12 md:w-16 md:h-16 po-button-red rounded-full flex flex-col items-center justify-center border-b-4 border-[#880000] active:border-b-[1px] active:translate-y-[3px]"
+                className="w-12 h-12 md:w-16 md:h-16 po-button-red flex flex-col items-center justify-center border-b-4 border-[#880000] active:border-b-[1px] active:translate-y-[3px]"
+                style={{ borderRadius: '12px' }}
               >
                 <div className="text-white text-[10px] md:text-xs font-bold">DROP</div>
               </button>

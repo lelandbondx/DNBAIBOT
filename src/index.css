@@ -2,14 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 @theme {
-  --color-lcd-bg: #8b9bb4;
-  --color-lcd-bg-dark: #7a8a9e;
-  --color-lcd-pixel: #1a1e24;
-  --color-lcd-pixel-off: #7f8fa3;
-  --color-hw-bg: #e0e0e0;
-  --color-hw-dark: #2a2a2a;
-  --color-hw-btn: #d4d4d4;
-  --color-hw-text: #222222;
+  --color-lcd-bg: #050505;
+  --color-lcd-pixel: #39ff14;
+  --color-hw-bg: #000000;
+  --color-hw-dark: #000000;
+  --color-hw-btn: #111111;
+  --color-hw-text: #39ff14;
 
   --font-pixel: "VT323", monospace;
   --font-sans: "Inter", sans-serif;
@@ -21,49 +19,47 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #000000;
   color: var(--color-hw-text);
   font-family: var(--font-sans);
   background-image: 
-    radial-gradient(#333 1px, transparent 1px),
-    radial-gradient(#333 1px, transparent 1px);
+    linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px);
   background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
 }
 
-/* Hardware Chassis */
+/* Hardware Chassis - Black and Neon */
 .hardware-chassis {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-  border: 2px solid #111;
+  background: #050505;
+  border: 4px solid #39ff14;
   border-radius: 16px;
   box-shadow: 
-    0 30px 60px rgba(0,0,0,0.8), 
-    inset 0 2px 10px rgba(255,255,255,0.1),
-    inset 0 -5px 15px rgba(0,0,0,0.5);
+    0 0 40px rgba(57,255,20,0.1), 
+    inset 0 0 20px rgba(57,255,20,0.1);
   position: relative;
   overflow: hidden;
 }
 
-/* LCD Screen */
+/* LCD Screen - Pure Black & Neon Green */
 .lcd-screen {
   background-color: var(--color-lcd-bg);
-  border: 4px solid #111;
-  border-radius: 4px;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 2px 0 rgba(255,255,255,0.1);
+  border: 2px solid #39ff14;
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px rgba(57,255,20,0.3), 0 0 10px rgba(57,255,20,0.2);
   font-family: var(--font-pixel);
   color: var(--color-lcd-pixel);
 }
 
-/* Physical Buttons */
+/* Physical Buttons - High Contrast Black & Green */
 .po-button {
-  background: linear-gradient(180deg, #e8e8e8 0%, #d4d4d4 100%);
-  border: 2px solid #888;
-  border-bottom: 4px solid #888;
-  border-radius: 50%; /* Make them circular for PO vibe */
-  color: #222;
+  background: #0a0a0a;
+  border: 2px solid #39ff14;
+  border-bottom: 6px solid #1a8809;
+  border-radius: 8px; /* Larger rounded rectangles instead of small circles */
+  color: #39ff14;
   font-weight: bold;
-  font-size: 0.7rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.8);
+  font-size: 0.9rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.8);
   transition: all 0.05s ease;
   user-select: none;
   cursor: pointer;
@@ -74,43 +70,61 @@ body {
 }
 
 .po-button:active {
-  transform: translateY(3px);
-  border-bottom-width: 1px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.8);
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+  background: #39ff14;
+  color: #000;
+  box-shadow: 0 0 15px #39ff14;
 }
 
 .po-button-dark {
-  background: linear-gradient(180deg, #444 0%, #333 100%);
-  border-color: #111;
-  color: #ddd;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+  background: #050505;
+  border-color: #222;
+  border-bottom-color: #000;
+  color: #888;
 }
 
 .po-button-red {
-  background: linear-gradient(180deg, #ff4d4d 0%, #cc0000 100%);
-  border-color: #880000;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+  background: #000;
+  border-color: #ff3333;
+  border-bottom-color: #880000;
+  color: #ff3333;
+}
+
+.po-button-red:active {
+  background: #ff3333;
+  color: #000;
+  box-shadow: 0 0 15px #ff3333;
+}
+
+/* Active Step Override */
+.po-button-active {
+  background: #39ff14 !important;
+  border-color: #ffffff !important;
+  border-bottom-color: #1a8809 !important;
+  color: #000 !important;
+  box-shadow: 0 0 20px rgba(57,255,20,0.6) !important;
 }
 
 /* LEDs */
 .led-indicator {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: #444;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  background-color: #111;
+  border: 1px solid #333;
   margin-bottom: 2px;
 }
 
 .led-active {
-  background-color: #ff3333;
-  box-shadow: 0 0 8px #ff3333, inset 0 1px 2px rgba(255,255,255,0.8);
+  background-color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 10px #ffffff;
 }
 
 .led-play {
   background-color: #39ff14;
-  box-shadow: 0 0 8px #39ff14, inset 0 1px 2px rgba(255,255,255,0.8);
+  box-shadow: 0 0 12px #39ff14;
 }
 
 /* Visualizer Canvas overrides */

@@ -77,17 +77,17 @@ export function Visualizer() {
       time += 0.05;
       
       // Clear with LCD background
-      ctx.fillStyle = '#8b9bb4';
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Draw CRT scanlines & Background Pizazz
-      ctx.fillStyle = 'rgba(26, 30, 36, 0.05)';
+      ctx.fillStyle = 'rgba(57, 255, 20, 0.05)';
       for (let i = 0; i < canvas.height; i += 4) {
         ctx.fillRect(0, i, canvas.width, 1);
       }
       
       // Draw dynamic laser background
-      ctx.strokeStyle = `rgba(26, 30, 36, 0.1)`;
+      ctx.strokeStyle = `rgba(57, 255, 20, 0.1)`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for(let i=0; i<5; i++) {
@@ -120,9 +120,10 @@ export function Visualizer() {
         ctx.save();
         
         // LCD Pixel color
-        ctx.fillStyle = '#1a1e24';
-        ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
+        const isDrums = sprite.trackId < 10;
+        ctx.fillStyle = isDrums ? '#39ff14' : '#ff00ff';
+        ctx.shadowColor = isDrums ? '#39ff14' : '#ff00ff';
+        ctx.shadowBlur = timer > 0 ? 15 : 5;
         
         const currentY = (sprite.action === 'jump' || sprite.action === 'uppercut') ? sprite.baseY - (Math.sin(timer * Math.PI) * 50) : sprite.baseY;
         
