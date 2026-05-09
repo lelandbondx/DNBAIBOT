@@ -1,4 +1,4 @@
-import { useSequencerStore, KitType } from '../store/useSequencerStore';
+import { useSequencerStore, type KitType } from '../store/useSequencerStore';
 import { engine } from '../audio/Engine';
 import * as Tone from 'tone';
 import { useState } from 'react';
