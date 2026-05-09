@@ -76,18 +76,18 @@ export function Visualizer() {
     const render = () => {
       time += 0.05;
       
-      // Clear with pure black
-      ctx.fillStyle = '#000000';
+      // Clear with LCD background
+      ctx.fillStyle = '#8b9bb4';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Draw CRT scanlines & Background Pizazz
-      ctx.fillStyle = 'rgba(57, 255, 20, 0.05)';
+      ctx.fillStyle = 'rgba(26, 30, 36, 0.05)';
       for (let i = 0; i < canvas.height; i += 4) {
         ctx.fillRect(0, i, canvas.width, 1);
       }
       
       // Draw dynamic laser background
-      ctx.strokeStyle = `hsla(${(time * 50) % 360}, 100%, 50%, 0.2)`;
+      ctx.strokeStyle = `rgba(26, 30, 36, 0.1)`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for(let i=0; i<5; i++) {
@@ -119,11 +119,10 @@ export function Visualizer() {
 
         ctx.save();
         
-        // Neon Glow
-        const isDrums = sprite.trackId < 10;
-        ctx.fillStyle = isDrums ? '#39ff14' : '#ff00ff';
-        ctx.shadowColor = isDrums ? '#39ff14' : '#ff00ff';
-        ctx.shadowBlur = timer > 0 ? 15 : 5;
+        // LCD Pixel color
+        ctx.fillStyle = '#1a1e24';
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         
         const currentY = (sprite.action === 'jump' || sprite.action === 'uppercut') ? sprite.baseY - (Math.sin(timer * Math.PI) * 50) : sprite.baseY;
         
@@ -212,10 +211,7 @@ export function Visualizer() {
 
       // Turn off glow for shadow
       ctx.shadowBlur = 0;
-      // Draw LCD Border shadow
-      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--color-lcd-pixel').trim() || '#00f3ff';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+      // Draw internal shadow manually if needed, or rely on CSS
 
       animationId = requestAnimationFrame(render);
     };
@@ -226,7 +222,7 @@ export function Visualizer() {
   }, []);
 
   return (
-    <div className="w-full h-48 lcd-screen rounded border-4 border-[#39ff14] relative overflow-hidden shadow-[0_0_20px_#39ff14]">
+    <div className="w-full h-48 lcd-screen relative">
       <canvas 
         ref={canvasRef} 
         width={600} 

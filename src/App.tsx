@@ -1,81 +1,81 @@
+import { Visualizer } from './components/Visualizer';
 import { Transport } from './components/Transport';
 import { Grid } from './components/Grid';
-import { Visualizer } from './components/Visualizer';
-import { useState } from 'react';
-import * as Tone from 'tone';
-import { engine } from './audio/Engine';
+import { useSequencerStore } from './store/useSequencerStore';
 
 function App() {
-  const [poweredOn, setPoweredOn] = useState(false);
+  const { setFX } = useSequencerStore();
 
-  const handlePowerOn = async (e?: React.SyntheticEvent) => {
-    if (e) e.preventDefault();
-    
-    // Synchronously resume context before any awaits (Required for iOS Safari)
-    if (Tone.context.state !== 'running') {
-      Tone.context.resume();
-    }
-
-    await Tone.start();
-    await engine.init();
-    
-    // Test Beep
-    const synth = new Tone.Synth().toDestination();
-    synth.triggerAttackRelease("C5", "8n", Tone.now());
-    
-    setPoweredOn(true);
+  const handleFX = (fx: 'STUTTER' | 'FILTER' | 'DROP') => {
+    setFX(fx);
+    if (navigator.vibrate) navigator.vibrate(20);
   };
 
-  if (!poweredOn) {
-    return (
-      <div className="min-h-screen bg-[var(--color-hw-dark)] flex flex-col items-center justify-center p-4 font-pixel text-center">
-        <button 
-          onClick={handlePowerOn}
-          onTouchEnd={handlePowerOn}
-          className="bg-black border-4 border-[var(--color-lcd-pixel)] text-[var(--color-lcd-pixel)] px-8 py-6 text-2xl hover:bg-[var(--color-lcd-pixel)] hover:text-black transition-all shadow-[0_0_20px_var(--color-lcd-pixel)] animate-pulse mb-8"
-        >
-          POWER ON
-        </button>
-        <p className="text-[var(--color-hw-text)] text-[10px] md:text-xs max-w-sm mt-8 opacity-75 leading-relaxed">
-          ⚠️ iOS USERS (iPhone/iPad):<br/>
-          Make sure your device's physical silent switch is turned OFF (and volume is up), otherwise Web Audio is forcibly muted!
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[var(--color-hw-dark)] flex flex-col items-center p-4 md:p-8 font-sans">
-      <div className="max-w-4xl w-full flex flex-col gap-6">
+    <div className="w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col gap-6">
+      {/* Physical Hardware Device Chassis */}
+      <div className="hardware-chassis">
+        {/* Hardware Screws (Aesthetic) */}
+        <div className="absolute top-4 left-4 w-3 h-3 rounded-full bg-[#111] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)] border border-[#333]"></div>
+        <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-[#111] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)] border border-[#333]"></div>
+        <div className="absolute bottom-4 left-4 w-3 h-3 rounded-full bg-[#111] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)] border border-[#333]"></div>
+        <div className="absolute bottom-4 right-4 w-3 h-3 rounded-full bg-[#111] shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)] border border-[#333]"></div>
         
-        {/* Header */}
-        <header className="flex justify-between items-end mb-4 border-b-4 border-[var(--color-hw-btn)] pb-2">
-          <div>
-            <h1 className="text-2xl md:text-4xl font-pixel text-[var(--color-hw-text)] tracking-tighter drop-shadow-[0_0_8px_rgba(0,243,255,0.5)]">
-              ROBO-TUNES
-            </h1>
-            <p className="font-pixel text-[10px] text-gray-500 mt-2">CYBER SEQUENCER</p>
-          </div>
-          <div className="font-pixel text-[10px] text-gray-500">
-            MODEL: RT-X
-          </div>
-        </header>
+        {/* Header / Brand */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-widest text-[#dcdcdc] font-sans drop-shadow-md">
+            PO-174
+          </h1>
+          <p className="text-[#888] font-pixel text-sm uppercase tracking-widest">Drum & Bass AI Engine</p>
+        </div>
 
-        {/* Screen Area */}
-        <div className="p-4 bg-[var(--color-hw-bg)] rounded border-t-4 border-l-4 border-black border-b-4 border-r-4 border-[var(--color-hw-btn)]">
+        <div className="flex flex-col gap-6 z-10 relative">
           <Visualizer />
-        </div>
+          <Transport />
+          <Grid />
 
-        {/* Controls Area */}
-        <Transport />
-        <Grid />
-        
-        {/* Footer */}
-        <div className="mt-8 flex justify-between text-gray-400 font-pixel text-[8px]">
-          <p>BATTERY: OK</p>
-          <p>MADE BY LEE</p>
-        </div>
+          {/* Punch-In FX Buttons */}
+          <div className="flex justify-between items-center bg-[#111] p-3 md:p-4 rounded-xl border-4 border-[#222] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] mt-2">
+            <div className="font-sans font-bold text-[#666] uppercase text-xs md:text-sm tracking-widest">
+              Live Punch-In FX
+            </div>
+            <div className="flex gap-2 md:gap-4">
+              <button 
+                onMouseDown={() => handleFX('STUTTER')}
+                onMouseUp={() => setFX(null)}
+                onMouseLeave={() => setFX(null)}
+                onTouchStart={() => handleFX('STUTTER')}
+                onTouchEnd={() => setFX(null)}
+                className="w-12 h-12 md:w-16 md:h-16 po-button rounded-full flex flex-col"
+              >
+                <div className="text-[10px] md:text-xs">1</div>
+                <div className="text-[8px] md:text-[10px] text-[#555]">STTTR</div>
+              </button>
+              <button 
+                onMouseDown={() => handleFX('FILTER')}
+                onMouseUp={() => setFX(null)}
+                onMouseLeave={() => setFX(null)}
+                onTouchStart={() => handleFX('FILTER')}
+                onTouchEnd={() => setFX(null)}
+                className="w-12 h-12 md:w-16 md:h-16 po-button rounded-full flex flex-col"
+              >
+                <div className="text-[10px] md:text-xs">2</div>
+                <div className="text-[8px] md:text-[10px] text-[#555]">FLTER</div>
+              </button>
+              <button 
+                onMouseDown={() => handleFX('DROP')}
+                onMouseUp={() => setFX(null)}
+                onMouseLeave={() => setFX(null)}
+                onTouchStart={() => handleFX('DROP')}
+                onTouchEnd={() => setFX(null)}
+                className="w-12 h-12 md:w-16 md:h-16 po-button-red rounded-full flex flex-col items-center justify-center border-b-4 border-[#880000] active:border-b-[1px] active:translate-y-[3px]"
+              >
+                <div className="text-white text-[10px] md:text-xs font-bold">DROP</div>
+              </button>
+            </div>
+          </div>
 
+        </div>
       </div>
     </div>
   );

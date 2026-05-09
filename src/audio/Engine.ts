@@ -4,10 +4,18 @@ import { useSequencerStore } from '../store/useSequencerStore';
 class AudioEngine {
   initialized = false;
   synths: any[] = [];
+  
+  // Master FX Bus
   masterCompressor!: Tone.Compressor;
   masterLimiter!: Tone.Limiter;
-  masterReverb!: Tone.Reverb;
-  masterDistortion!: Tone.Distortion;
+  
+  // Punch-In FX
+  fxFilter!: Tone.Filter;
+  fxTremolo!: Tone.Tremolo;
+  fxAutoFilter!: Tone.AutoFilter;
+  
+  // Riser Synth
+  riserSynth!: Tone.NoiseSynth;
 
   async init() {
     if (this.initialized) return;
@@ -20,8 +28,24 @@ class AudioEngine {
       release: 0.1,
     });
     this.masterLimiter = new Tone.Limiter(-1).toDestination();
-    this.masterReverb = new Tone.Reverb({ decay: 1.5, preDelay: 0.01, wet: 0.1 });
-    this.masterDistortion = new Tone.Distortion({ distortion: 0.4, wet: 0 });
+    
+    // Setup Punch-In FX
+    this.fxFilter = new Tone.Filter({ frequency: 20000, type: 'lowpass', Q: 2 });
+    this.fxTremolo = new Tone.Tremolo({ frequency: '16n', depth: 1, type: 'square' }).start();
+    this.fxAutoFilter = new Tone.AutoFilter({ frequency: '8n', baseFrequency: 200, octaves: 4, type: 'sine' }).start();
+
+    // Riser for the "DROP"
+    this.riserSynth = new Tone.NoiseSynth({
+      noise: { type: 'white' },
+      envelope: { attack: 2, decay: 0, sustain: 1, release: 0.1 }
+    });
+
+    // Routing
+    this.fxAutoFilter.connect(this.fxTremolo);
+    this.fxTremolo.connect(this.fxFilter);
+    this.fxFilter.connect(this.masterCompressor);
+    this.masterCompressor.connect(this.masterLimiter);
+    this.riserSynth.connect(this.masterLimiter);
 
     // Track 0: KICK
     const kickSynth = new Tone.MembraneSynth({
@@ -120,7 +144,7 @@ class AudioEngine {
       });
       const echo = new Tone.PingPongDelay('8n.', 0.3);
       synth.connect(echo);
-      echo.toDestination();
+      echo.connect(this.fxAutoFilter);
       return synth;
     };
 
@@ -137,7 +161,7 @@ class AudioEngine {
     });
     const reeseFilter = new Tone.Filter(800, 'lowpass');
     reeseSynth.connect(reeseFilter);
-    reeseFilter.toDestination();
+    reeseFilter.connect(this.fxAutoFilter);
 
     // Track 16: WOBBLE BASS
     const wobbleSynth = new Tone.Synth({
@@ -148,14 +172,14 @@ class AudioEngine {
     wobbleFilter.baseFrequency = 100;
     wobbleFilter.octaves = 4;
     wobbleSynth.connect(wobbleFilter);
-    wobbleFilter.toDestination();
+    wobbleFilter.connect(this.fxAutoFilter);
 
     // Track 17: RAVE STAB
     const stabSynth = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: 'sawtooth' },
       envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
     });
-    stabSynth.toDestination();
+    stabSynth.connect(this.fxAutoFilter);
 
     // Track 18: 808 GLIDE
     const eightOhEight = new Tone.MembraneSynth({
@@ -164,7 +188,7 @@ class AudioEngine {
       oscillator: { type: 'sine' },
       envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 }
     });
-    eightOhEight.toDestination();
+    eightOhEight.connect(this.fxAutoFilter);
 
     // Track 19: JUNGLE TOM
     const jungleTom = new Tone.MembraneSynth({
@@ -173,7 +197,7 @@ class AudioEngine {
       oscillator: { type: 'square' },
       envelope: { attack: 0.01, decay: 0.4, sustain: 0, release: 0.4 }
     });
-    jungleTom.toDestination();
+    jungleTom.connect(this.fxAutoFilter);
 
     // Track 20: AMEN SNARE
     const amenSnare = new Tone.NoiseSynth({
@@ -182,7 +206,7 @@ class AudioEngine {
     });
     const amenFilter = new Tone.Filter(3000, 'highpass');
     amenSnare.connect(amenFilter);
-    amenFilter.toDestination();
+    amenFilter.connect(this.fxAutoFilter);
 
     // Track 21: DONK
     const donkSynth = new Tone.FMSynth({
@@ -193,7 +217,7 @@ class AudioEngine {
       modulation: { type: 'square' },
       modulationEnvelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
     });
-    donkSynth.toDestination();
+    donkSynth.connect(this.fxAutoFilter);
 
     // Track 22: SHAKER
     const shakerSynth = new Tone.MetalSynth({
@@ -203,7 +227,7 @@ class AudioEngine {
       resonance: 6000,
       octaves: 1.5
     });
-    shakerSynth.toDestination();
+    shakerSynth.connect(this.fxAutoFilter);
 
     this.synths = [
       kickSynth, snareSynth, hatSynth, growlBass, subBass,
@@ -213,9 +237,18 @@ class AudioEngine {
       amenSnare, donkSynth, shakerSynth
     ];
 
-    // Connect tracks 0-9 to destination
+    // Connect core tracks to the Punch-In FX bus
     for(let i = 0; i <= 9; i++) {
-      this.synths[i].toDestination();
+      if (this.synths[i] === padSynth || this.synths[i] === crashSynth) {
+        // Handled by reverb
+        padReverb.connect(this.fxAutoFilter);
+      } else if (this.synths[i] === growlBass) {
+        bassFilter.connect(this.fxAutoFilter);
+      } else if (this.synths[i] === leadSynth) {
+        leadDelay.connect(this.fxAutoFilter);
+      } else {
+        this.synths[i].connect(this.fxAutoFilter);
+      }
     }
 
     Tone.Transport.scheduleRepeat((time) => {
@@ -226,11 +259,41 @@ class AudioEngine {
     this.initialized = true;
   }
 
+  applyPunchInFX(fx: 'STUTTER' | 'FILTER' | 'DROP' | null) {
+    if (!this.initialized) return;
+    
+    // Reset defaults
+    this.fxTremolo.wet.value = 0;
+    this.fxFilter.frequency.value = 20000;
+    
+    if (fx === 'STUTTER') {
+      this.fxTremolo.wet.value = 1;
+    } else if (fx === 'FILTER') {
+      this.fxFilter.frequency.rampTo(400, 0.1);
+    } else if (fx === 'DROP') {
+      this.fxFilter.frequency.rampTo(20000, 0.1);
+      this.riserSynth.triggerAttack();
+    } else {
+      this.riserSynth.triggerRelease();
+    }
+  }
+
   playStep(time: number) {
     const store = useSequencerStore.getState();
     const currentStep = store.currentStep;
     const tracks = store.tracks;
     const kit = store.currentKit;
+    const activeFX = store.activeFX;
+
+    // Apply Live FX
+    this.applyPunchInFX(activeFX);
+
+    // If "DROP" is active, trigger rapid snare rolls
+    if (activeFX === 'DROP') {
+      if (currentStep % 2 === 0) {
+        (this.synths[1] as Tone.NoiseSynth).triggerAttackRelease('32n', time); // Rapid snare
+      }
+    }
 
     tracks.forEach((track, index) => {
       const synth = this.synths[index];
@@ -238,7 +301,7 @@ class AudioEngine {
       
       synth.volume.value = track.muted ? -Infinity : track.volume;
 
-      if (track.steps[currentStep] && !track.muted) {
+      if (track.steps[currentStep] && !track.muted && activeFX !== 'DROP') {
         
         // Kit changes for core drums
         if (kit === 'LIQUID') {
@@ -278,14 +341,14 @@ class AudioEngine {
         else if (index === 17) (synth as Tone.PolySynth).triggerAttackRelease(['D4', 'F4', 'A4', 'C5'], '8n', time); // Minor 7th Rave Stab
         else if (index === 18) (synth as Tone.MembraneSynth).triggerAttackRelease('C1', '2n', time); // 808
         else if (index === 19) (synth as Tone.MembraneSynth).triggerAttackRelease('G2', '8n', time); // Jungle Tom
-        // 3 Brand New Extras
+        // Extras
         else if (index === 20) (synth as Tone.NoiseSynth).triggerAttackRelease('32n', time); // Amen Snare
         else if (index === 21) (synth as Tone.FMSynth).triggerAttackRelease('C2', '16n', time); // Donk
         else if (index === 22) (synth as Tone.MetalSynth).triggerAttackRelease('64n', time); // Shaker
       }
     });
 
-    store.setCurrentStep((currentStep + 1) % 16); // Reverted to 16 steps
+    store.setCurrentStep((currentStep + 1) % 16);
   }
 
   start() {
@@ -298,12 +361,6 @@ class AudioEngine {
   stop() {
     Tone.Transport.stop();
     useSequencerStore.getState().setCurrentStep(0);
-  }
-
-  toggleDistortion(enabled: boolean) {
-    if (this.masterDistortion) {
-      this.masterDistortion.wet.value = enabled ? 0.8 : 0;
-    }
   }
 }
 

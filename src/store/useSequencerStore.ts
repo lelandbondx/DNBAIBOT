@@ -12,6 +12,7 @@ export interface TrackState {
 }
 
 export type KitType = 'UK-DNB' | 'LIQUID' | 'NEURO' | 'JUNGLE';
+export type FXType = 'STUTTER' | 'FILTER' | 'DROP' | null;
 
 interface SequencerState {
   bpm: number;
@@ -19,6 +20,7 @@ interface SequencerState {
   tracks: TrackState[];
   currentStep: number;
   currentKit: KitType;
+  activeFX: FXType;
   setBpm: (bpm: number) => void;
   togglePlay: () => void;
   setPlaying: (playing: boolean) => void;
@@ -28,6 +30,7 @@ interface SequencerState {
   setVolume: (trackId: TrackId, volume: number) => void;
   setCurrentStep: (step: number) => void;
   setKit: (kit: KitType) => void;
+  setFX: (fx: FXType) => void;
   clearPattern: () => void;
   generateEpicBeat: () => void;
   distortionEnabled: boolean;
@@ -128,6 +131,7 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
   tracks: initialState.tracks,
   currentStep: 0,
   currentKit: initialState.currentKit as KitType,
+  activeFX: null,
   distortionEnabled: false,
   toggleDistortion: () => set((state) => ({ distortionEnabled: !state.distortionEnabled })),
   setBpm: (bpm) => {
@@ -141,6 +145,7 @@ export const useSequencerStore = create<SequencerState>((set, get) => ({
   setPlaying: (playing) => set({ isPlaying: playing }),
   setCurrentStep: (step) => set({ currentStep: step }),
   setKit: (kit) => set({ currentKit: kit }),
+  setFX: (fx) => set({ activeFX: fx }),
   clearPattern: () => set((state) => ({
     tracks: state.tracks.map(t => ({ ...t, steps: Array(16).fill(false) }))
   })),
